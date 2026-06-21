@@ -6,13 +6,13 @@ Get your project key from [https://vynix.in](https://vynix.in), then:
 
 ```json
 {
-  "mcpServers": {
-    "vynix": {
-      "command": "npx",
-      "args": ["-y", "@vynix/mcp"],
-      "env": { "VYNIX_API_TOKEN": "YOUR_TOKEN" }
-    }
-  }
+ "mcpServers": {
+ "vynix": {
+ "command": "npx",
+ "args": ["-y", "@vynix/mcp"],
+ "env": { "VYNIX_API_TOKEN": "YOUR_TOKEN" }
+ }
+ }
 }
 ```
 

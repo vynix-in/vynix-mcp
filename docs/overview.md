@@ -1,4 +1,4 @@
-# Vynix MCP Server — Overview
+# Vynix MCP Server, Overview
 
 The feedback layer for teams that build with AI coding agents.
 
