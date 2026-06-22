@@ -1,79 +1,93 @@
-# Vynix MCP Server
+# Vynix MCP server
 
-> Give AI coding agents access to Vynix visual feedback and bug reports.
+A [Model Context Protocol](https://modelcontextprotocol.io) server that gives AI coding
+agents (Claude, Copilot, Cursor, …) direct access to your [Vynix](https://vynix.in) annotations — so an
+agent can read the feedback, see the captured context and screenshots, run an AI
+diagnosis, generate a fix prompt, open a GitHub issue, update status, and comment, all
+without leaving the editor.
 
-[![Website](https://img.shields.io/badge/website-vynix.in-008448)](https://vynix.in)
-[![Docs](https://img.shields.io/badge/docs-vynix.in%2Fdocs-008448)](https://vynix.in/docs)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
+Every tool carries MCP **annotations** (read-only / idempotent / open-world hints) so a
+client can auto-approve safe reads and confirm before writes, AI spend, or GitHub calls.
 
-Vynix MCP Server connects [Vynix](https://vynix.in) to MCP-aware AI coding tools. It lets agents read visual feedback, bug reports, captured browser context, and AI diagnosis from Vynix so issues can move from report to fix faster.
+## Tools
 
-Vynix MCP Server is part of the Vynix developer toolkit for teams that build with AI coding agents.
+Read-only:
 
-## What is Vynix?
+| Tool | Description |
+| --- | --- |
+| `list_projects` | List the projects you own. |
+| `list_annotations` | List a project's annotations, filtered by status / type / priority. |
+| `get_annotation` | Fetch one annotation with full page / element / DOM / diagnostics context. |
+| `list_comments` | Read an annotation's discussion thread. |
+| `get_annotation_analysis` | Read the latest AI diagnosis (root causes, fix, likely files). |
+| `get_annotation_screenshots` | Return attached screenshots as viewable images. |
+| `list_annotation_issues` | List the GitHub issues opened from an annotation (optionally live). |
+| `list_project_issues` | List every tracker issue across a project, with a summary. |
+| `generate_prompt` | Produce a ready-to-paste prompt (`claude`/`copilot`/`cursor`/`gemini`/`codex`/`generic`). |
+| `get_metrics` | KPI counts, status breakdown, time series, recent activity. |
+| `list_members` | A project's team members. |
+| `get_activity` | A project's recent activity feed. |
 
-Vynix is a website annotation and developer-context tool. Add a lightweight widget to any site, click what is wrong, and Vynix captures the element, a screenshot, console and network context, and an AI diagnosis of the likely root cause.
+Writes (a client should confirm these):
 
-From there, you can copy a ready-to-build prompt or open a GitHub issue and assign it to a coding agent.
+| Tool | Description |
+| --- | --- |
+| `update_annotation_status` | Move an annotation to `in_progress`, `completed`, etc. |
+| `add_comment` | Post a comment to an annotation's thread (notifies the team). |
+| `diagnose_annotation` | Run the AI Diagnosis Engine (uses an AI provider; stores the result). |
+| `create_github_issue` | File a GitHub issue from an annotation. |
+| `create_share_link` | Mint a read-only public review link for a project. |
 
-Learn more at **[vynix.in](https://vynix.in)** or read the **[documentation](https://vynix.in/docs)**.
+## Prompts
 
-## Why teams use Vynix
+| Prompt | Description |
+| --- | --- |
+| `fix_annotation` | A guided, step-by-step workflow that walks the agent from an annotation through context → screenshots → AI diagnosis → fix → status + comment. |
 
-- **Click-to-annotate any page.** Point at an element, region, or selected text and leave a note pinned to the relevant part of the page.
-- **Automatic developer context.** Each note includes the element selector, page URL, screenshot, and privacy-safe console and network context.
-- **AI root-cause diagnosis.** Vynix reviews the captured context and suggests the likely cause, a possible fix, and the files most likely involved.
-- **Hand off to a coding agent.** Convert a note into a prompt or GitHub issue, then assign it through Copilot or your existing workflow.
+## Configure
 
-## Install
+The server talks to the [Vynix](https://vynix.in) API. Authenticate with either a token or credentials:
 
 ```bash
-npx -y @vynix/mcp
+cp .env.example .env
+# Set VYNIX_API_URL (https://vynix.in) and either VYNIX_API_TOKEN
+# or VYNIX_API_EMAIL + VYNIX_API_PASSWORD.
 ```
 
-> Note: the Vynix toolkit is rolling out. If a package or command above does not resolve yet, watch this repo for the release and use the hosted product at [vynix.in](https://vynix.in) in the meantime.
+When credentials are supplied, the server logs in on demand and refreshes the token
+automatically if it expires.
 
-## Usage
+## Build & run
 
-Add the Vynix MCP server to your AI client, such as Claude Desktop, Cursor, or another MCP-aware agent.
+```bash
+git clone https://github.com/vynix-in/vynix-mcp.git
+cd vynix-mcp
+npm install
+npm run build
+npm start          # runs dist/index.js over stdio
+npm run dev        # watch mode with tsx
+npm test           # smoke test: launches the server and verifies the tool + prompt surface
+```
+
+## Register with a client
+
+Most MCP clients take a command + environment. Example (Claude Desktop /
+`claude_desktop_config.json`, or VS Code `mcp.json`):
 
 ```json
 {
- "mcpServers": {
- "vynix": {
- "command": "npx",
- "args": ["-y", "@vynix/mcp"],
- "env": { "VYNIX_API_TOKEN": "YOUR_TOKEN" }
- }
- }
+  "mcpServers": {
+    "vynix": {
+      "command": "node",
+      "args": ["/absolute/path/to/vynix-mcp/dist/index.js"],
+      "env": {
+        "VYNIX_API_URL": "https://vynix.in",
+        "VYNIX_API_EMAIL": "you@example.com",
+        "VYNIX_API_PASSWORD": "your-password"
+      }
+    }
+  }
 }
 ```
 
-After it is configured, your AI client can use the Vynix MCP server to read Vynix feedback and work with related issues.
-
-## Documentation
-
-Full guides and the API reference live at [https://vynix.in/docs](https://vynix.in/docs).
-
-## Related Vynix projects
-
-- [Vynix Browser Extension](https://github.com/vynix-in/vynix-browser-extension)
-- [Vynix JavaScript SDK](https://github.com/vynix-in/vynix-sdk-js)
-- [Vynix PHP SDK](https://github.com/vynix-in/vynix-sdk-php)
-- [Vynix Python SDK](https://github.com/vynix-in/vynix-sdk-python)
-- [Vynix GitHub Action](https://github.com/vynix-in/vynix-github-action)
-- [Vynix VS Code Extension](https://github.com/vynix-in/vynix-vscode-extension)
-
-Browse the full toolkit at the [Vynix GitHub organisation](https://github.com/vynix-in).
-
-## Keywords
-
-vynix, bug-reporting, visual-feedback, website-annotation, ai-diagnosis, developer-tools, feedback-tool, mcp, model-context-protocol, ai-agents, claude, copilot
-
-## About Vynix
-
-Vynix is the feedback layer for teams building with AI coding agents. Point at a bug on any live website, and Vynix captures the context, diagnoses the likely cause, and hands it to your coding agent. Start free at [vynix.in](https://vynix.in).
-
-## License
-
-MIT, see [LICENSE](./LICENSE).
+Diagnostics are written to stderr; stdout is reserved for the protocol stream.

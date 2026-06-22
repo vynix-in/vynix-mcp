@@ -1,11 +1,12 @@
-# Release notes, Vynix MCP Server
+# Changelog
 
-## v0.1.0, 21 June 2026
+## 0.1.0
 
-First public release.
-
-- Initial project scaffold and documentation.
-- Links to the [Vynix website](https://vynix.in) and [documentation](https://vynix.in/docs).
-- Ready for community feedback.
-
-For product feedback, use Vynix itself at [https://vynix.in](https://vynix.in).
+- First public release of the Vynix MCP server.
+- Read tools: list_projects, list_annotations, get_annotation, list_comments,
+  get_annotation_analysis, get_annotation_screenshots, list_annotation_issues,
+  list_project_issues, generate_prompt, get_metrics, list_members, get_activity.
+- Write tools (client should confirm): update_annotation_status, add_comment,
+  diagnose_annotation, create_github_issue, create_share_link.
+- Guided `fix_annotation` prompt that walks an agent from a note to a fix.
+- Auth via VYNIX_API_TOKEN, or VYNIX_API_EMAIL + VYNIX_API_PASSWORD.

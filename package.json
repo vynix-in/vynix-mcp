@@ -1,0 +1,38 @@
+{
+  "name": "@vynix/mcp-server",
+  "version": "0.1.0",
+  "private": false,
+  "license": "MIT",
+  "type": "module",
+  "description": "Model Context Protocol server that exposes Vynix annotations to AI coding agents.",
+  "homepage": "https://vynix.in",
+  "repository": { "type": "git", "url": "https://github.com/vynix-in/vynix-mcp.git" },
+  "bugs": { "url": "https://github.com/vynix-in/vynix-mcp/issues" },
+  "keywords": ["mcp", "model-context-protocol", "vynix", "ai", "coding-agents", "bug-reporting", "website-annotation"],
+  "bin": {
+    "vynix-mcp": "dist/index.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "smoke": "npm run build && node scripts/smoke.mjs",
+    "test": "node scripts/smoke.mjs",
+    "lint": "eslint .",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.12.0",
+    "@types/node": "^20.14.0",
+    "eslint": "^9.12.0",
+    "prettier": "^3.3.3",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2",
+    "typescript-eslint": "^8.8.1"
+  }
+}

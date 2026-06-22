@@ -1,1 +1,4 @@
-repo-meta.json
+dist/
+node_modules/
+.env
+*.log
