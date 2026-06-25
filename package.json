@@ -1,6 +1,6 @@
 {
-  "name": "@vynix/mcp-server",
-  "version": "0.1.0",
+  "name": "@usevynix/mcp-server",
+  "version": "0.1.1",
   "private": false,
   "license": "MIT",
   "type": "module",

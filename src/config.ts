@@ -7,7 +7,7 @@ export interface VynixConfig {
 
 /** Reads connection settings from the environment. */
 export function loadConfig(): VynixConfig {
-  const apiUrl = (process.env.VYNIX_API_URL || 'https://vynix.in').replace(/\/+$/, '');
+  const apiUrl = (process.env.VYNIX_API_URL || 'https://www.vynix.in').replace(/\/+$/, '');
 
   return {
     apiUrl,

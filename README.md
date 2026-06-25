@@ -1,7 +1,7 @@
 # Vynix MCP server
 
 A [Model Context Protocol](https://modelcontextprotocol.io) server that gives AI coding
-agents (Claude, Copilot, Cursor, …) direct access to your [Vynix](https://vynix.in) annotations — so an
+agents (Claude, Copilot, Cursor and more) direct access to your [Vynix](https://vynix.in) annotations, so an
 agent can read the feedback, see the captured context and screenshots, run an AI
 diagnosis, generate a fix prompt, open a GitHub issue, update status, and comment, all
 without leaving the editor.
@@ -44,20 +44,44 @@ Writes (a client should confirm these):
 | --- | --- |
 | `fix_annotation` | A guided, step-by-step workflow that walks the agent from an annotation through context → screenshots → AI diagnosis → fix → status + comment. |
 
-## Configure
+## Install
 
-The server talks to the [Vynix](https://vynix.in) API. Authenticate with either a token or credentials:
+The server is published on npm. Most MCP clients (Cursor, VS Code, Claude Desktop and more)
+just need a command and a token, and `npx` fetches and runs it automatically with no global
+install. Requires Node.js 18+:
 
-```bash
-cp .env.example .env
-# Set VYNIX_API_URL (https://vynix.in) and either VYNIX_API_TOKEN
-# or VYNIX_API_EMAIL + VYNIX_API_PASSWORD.
+```json
+{
+  "mcpServers": {
+    "vynix": {
+      "command": "npx",
+      "args": ["-y", "@usevynix/mcp-server"],
+      "env": {
+        "VYNIX_API_URL": "https://www.vynix.in",
+        "VYNIX_API_TOKEN": "PASTE_YOUR_TOKEN_HERE"
+      }
+    }
+  }
+}
 ```
 
-When credentials are supplied, the server logs in on demand and refreshes the token
-automatically if it expires.
+Generate your token from the Vynix dashboard at <https://www.vynix.in/mcp>. Config file
+locations: Cursor `~/.cursor/mcp.json`, VS Code `.vscode/mcp.json`, Claude Desktop
+`claude_desktop_config.json`. VS Code uses a top-level `"servers"` key instead of
+`"mcpServers"`; everything else is identical.
 
-## Build & run
+## Configure
+
+Authenticate with either a token (recommended) or email and password:
+
+- `VYNIX_API_URL` - your Vynix API base URL (default `https://www.vynix.in`).
+- `VYNIX_API_TOKEN` - a token generated at <https://www.vynix.in/mcp>, **or**
+- `VYNIX_API_EMAIL` + `VYNIX_API_PASSWORD` - the server logs in on demand and refreshes
+  the token automatically when it expires.
+
+## Build from source
+
+For contributors who want to run the server from a local checkout:
 
 ```bash
 git clone https://github.com/vynix-in/vynix-mcp.git
@@ -69,10 +93,7 @@ npm run dev        # watch mode with tsx
 npm test           # smoke test: launches the server and verifies the tool + prompt surface
 ```
 
-## Register with a client
-
-Most MCP clients take a command + environment. Example (Claude Desktop /
-`claude_desktop_config.json`, or VS Code `mcp.json`):
+Then point your client at the built file instead of `npx`:
 
 ```json
 {
@@ -81,9 +102,8 @@ Most MCP clients take a command + environment. Example (Claude Desktop /
       "command": "node",
       "args": ["/absolute/path/to/vynix-mcp/dist/index.js"],
       "env": {
-        "VYNIX_API_URL": "https://vynix.in",
-        "VYNIX_API_EMAIL": "you@example.com",
-        "VYNIX_API_PASSWORD": "your-password"
+        "VYNIX_API_URL": "https://www.vynix.in",
+        "VYNIX_API_TOKEN": "PASTE_YOUR_TOKEN_HERE"
       }
     }
   }
